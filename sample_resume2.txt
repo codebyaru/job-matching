@@ -1,0 +1,19 @@
+Rahul Verma
+
+Professional Summary:
+Creative web developer with 3 years of experience designing and building responsive websites and web applications. Strong background in front-end frameworks and UI/UX design.
+
+Skills:
+- HTML, CSS, JavaScript
+- React, Angular
+- UI/UX Design, Figma
+- REST APIs
+- Git, Agile Methodologies
+
+Experience:
+Frontend Developer | WebWorks | 2022-Present
+- Developed and maintained company website and client portals
+- Collaborated with designers to improve user experience
+
+Education:
+B.Tech in Information Technology | DEF Institute | 2021

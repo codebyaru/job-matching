@@ -1,0 +1,19 @@
+Jane Smith
+
+Professional Summary:
+Results-driven data analyst with 4+ years of experience in data mining, visualization, and statistical modeling. Adept at transforming raw data into actionable insights to drive business decisions.
+
+Skills:
+- Data Analysis (Pandas, NumPy)
+- Data Visualization (Tableau, Power BI, Matplotlib)
+- SQL (MySQL, PostgreSQL)
+- Statistical Modeling (R, Python)
+- Excel, Data Cleaning
+
+Experience:
+Data Analyst | DataCorp | 2021-Present
+- Built dashboards for sales and marketing teams
+- Automated data cleaning pipelines using Python
+
+Education:
+BSc in Statistics | ABC University | 2020
