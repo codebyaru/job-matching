@@ -1,4 +1,4 @@
-# Job Matching Resume Analyzer
+# Resume Skill Gap Analyzer
 
 A Streamlit application that analyzes resumes and matches them with relevant job postings using machine learning.
 
