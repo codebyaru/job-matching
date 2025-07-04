@@ -21,7 +21,7 @@ import joblib  #for saving the model
 def generate_tailored_resume(resume_text, job, matched_skills):
     """Generate a tailored resume draft for a selected job."""
     job_title = job.get('Job Title', 'N/A')
-    company = 'N/A'  # No company column in your CSV
+    company = job.get('company', 'N/A')
     job_desc = job.get('description', job.get('job_description', ''))
     keywords = ', '.join(matched_skills)
     tailored_intro = (
@@ -137,7 +137,7 @@ def load_models_and_data():
         # Load the job dataset
         jobs_df = pd.read_csv('cleaned_jobs_deduped.csv')
         st.success(f"✅ Loaded {len(jobs_df)} job listings")
-        
+        jobs_df['combined'] = jobs_df['combined'].fillna('')
         if model is None or vectorizer is None:
             st.error("❌ Failed to load required model files.")
             show_troubleshooting_guide()
@@ -289,7 +289,7 @@ def analyze_resume(resume_text, model, vectorizer, jobs_df, top_n=10):
     """Main analysis function"""
     # Preprocess resume
     processed_resume = preprocess_text(resume_text)
-
+    jobs_df['combined'] = jobs_df['combined'].fillna('')
     # Vectorize resume
     resume_vector = vectorizer.transform([processed_resume])
 
@@ -375,7 +375,7 @@ TOP JOB MATCHES
 """
     for idx, (_, job) in enumerate(results['top_jobs'].head(10).iterrows(), 1):
         title = job.get('Job Title', 'N/A')
-        company = 'N/A'
+        company = job.get('company', 'N/A')
         compatibility = job['compatibility_score']
         similarity = job['similarity_score']
         report_content += f"""
@@ -547,7 +547,7 @@ def create_pdf_report(results, resume_text):
     story.append(Paragraph("Top Job Matches", styles['Heading2']))
     for idx, (_, job) in enumerate(results['top_jobs'].head(5).iterrows(), 1):
         title = job.get('Job Title', 'N/A')
-        company = 'N/A'
+        company = job.get('company', 'N/A')
         compatibility = job['compatibility_score']
         job_text = f"{idx}. {title} at {company} (Compatibility: {compatibility:.3f})"
         story.append(Paragraph(job_text, styles['Normal']))
@@ -559,12 +559,12 @@ def create_pdf_report(results, resume_text):
 # Streamlit App
 def main():
     st.set_page_config(
-        page_title="Job Matching Resume Analyzer", 
+        page_title="Resume Skill Gap Analyzer", 
         page_icon="📊", 
         layout="wide"
     )
     
-    st.title("📊 Job Matching Resume Analyzer")
+    st.title("📊 Resume Skill Gap Analyzer")
     st.markdown("Upload your resume to find the best matching jobs and identify skill gaps!")
     
     # Load models and data
@@ -682,7 +682,7 @@ def main():
                     
                     with col1:
                         title = job.get('Job Title', 'Job Title Not Available')
-                        company = 'N/A'
+                        company = job.get('company', 'N/A')
                         st.write(f"{idx}. {title}")
                         st.write(f"Company: {company}")
                     
@@ -806,7 +806,7 @@ def main():
         
         with tab1:  # Top Jobs tab
             st.subheader("🎯 One-Click Resume Tailoring")
-            job_options = [f"{idx+1}. {job.get('Job Title', 'N/A')} at N/A" 
+            job_options = [f"{idx+1}. {job.get('Job Title', 'N/A')} at {job.get('company', 'N/A')}" 
                for idx, (_, job) in enumerate(results['top_jobs'].iterrows())]
             selected_job_idx = st.selectbox("Select a job to tailor your resume:", options=list(range(len(job_options))), format_func=lambda i: job_options[i])
             if st.button("Generate Tailored Resume"):
