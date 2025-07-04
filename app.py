@@ -1,27 +1,27 @@
-import streamlit as st
-import pandas as pd
-import pickle
-import numpy as np
+import streamlit as st  # Importing necessary libraries AND MAKING THE WEB APP
+import pandas as pd #loading, analyzing and preprocessing data
+import pickle #joblib ka backup
+import numpy as np #maths and matrix operation in IR ML
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-import re
+import re #(Regular Expressions) #for text processing (dlt faltu chize space wegra)
 import string
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import nltk
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter #generates pdf
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-import io
-import plotly.express as px
+import io #file handling
+import plotly.express as px # for interactive visualizations
 import plotly.graph_objects as go
-import joblib  # Alternative to pickle
+import joblib  #for saving the model
 
 def generate_tailored_resume(resume_text, job, matched_skills):
     """Generate a tailored resume draft for a selected job."""
-    job_title = job.get('title', job.get('job_title', 'N/A'))
-    company = job.get('company', job.get('company_name', 'N/A'))
+    job_title = job.get('Job Title', 'N/A')
+    company = 'N/A'  # No company column in your CSV
     job_desc = job.get('description', job.get('job_description', ''))
     keywords = ', '.join(matched_skills)
     tailored_intro = (
@@ -374,8 +374,8 @@ TOP JOB MATCHES
 --------------
 """
     for idx, (_, job) in enumerate(results['top_jobs'].head(10).iterrows(), 1):
-        title = job.get('title', job.get('job_title', 'N/A'))
-        company = job.get('company', job.get('company_name', 'N/A'))
+        title = job.get('Job Title', 'N/A')
+        company = 'N/A'
         compatibility = job['compatibility_score']
         similarity = job['similarity_score']
         report_content += f"""
@@ -546,10 +546,9 @@ def create_pdf_report(results, resume_text):
     # Top Jobs
     story.append(Paragraph("Top Job Matches", styles['Heading2']))
     for idx, (_, job) in enumerate(results['top_jobs'].head(5).iterrows(), 1):
-        title = job.get('title', job.get('job_title', 'N/A'))
-        company = job.get('company', job.get('company_name', 'N/A'))
+        title = job.get('Job Title', 'N/A')
+        company = 'N/A'
         compatibility = job['compatibility_score']
-        
         job_text = f"{idx}. {title} at {company} (Compatibility: {compatibility:.3f})"
         story.append(Paragraph(job_text, styles['Normal']))
     
@@ -682,8 +681,8 @@ def main():
                     col1, col2 = st.columns([3, 1])
                     
                     with col1:
-                        title = job.get('title', job.get('job_title', 'Job Title Not Available'))
-                        company = job.get('company', job.get('company_name', 'Company Not Available'))
+                        title = job.get('Job Title', 'Job Title Not Available')
+                        company = 'N/A'
                         st.write(f"{idx}. {title}")
                         st.write(f"Company: {company}")
                     
@@ -742,7 +741,7 @@ def main():
             # Compatibility scores chart
             fig_scores = px.bar(
                 x=results['top_jobs']['compatibility_score'],
-                y=[f"{job.get('title', 'N/A')[:30]}..." for _, job in results['top_jobs'].iterrows()],
+                y=[f"{job.get('Job Title', 'N/A')[:30]}..." for _, job in results['top_jobs'].iterrows()],
                 orientation='h',
                 title="Job Compatibility Scores",
                 labels={'x': 'Compatibility Score', 'y': 'Job Title'}
@@ -768,7 +767,7 @@ def main():
             with col2:
                 # Top job scores
                 top_5_jobs = results['top_jobs'].head(5)
-                job_names = [f"{job.get('title', 'N/A')[:20]}..." for _, job in top_5_jobs.iterrows()]
+                job_names = [f"{job.get('Job Title', 'N/A')[:20]}..." for _, job in top_5_jobs.iterrows()]
                 fig_top = go.Figure(data=[
                     go.Bar(name='Compatibility', x=job_names, y=top_5_jobs['compatibility_score']),
                     go.Bar(name='Similarity', x=job_names, y=top_5_jobs['similarity_score'])
@@ -807,8 +806,8 @@ def main():
         
         with tab1:  # Top Jobs tab
             st.subheader("🎯 One-Click Resume Tailoring")
-            job_options = [f"{idx+1}. {job.get('title', job.get('job_title', 'N/A'))} at {job.get('company', job.get('company_name', 'N/A'))}" 
-                           for idx, (_, job) in enumerate(results['top_jobs'].iterrows())]
+            job_options = [f"{idx+1}. {job.get('Job Title', 'N/A')} at N/A" 
+               for idx, (_, job) in enumerate(results['top_jobs'].iterrows())]
             selected_job_idx = st.selectbox("Select a job to tailor your resume:", options=list(range(len(job_options))), format_func=lambda i: job_options[i])
             if st.button("Generate Tailored Resume"):
                 selected_job = results['top_jobs'].iloc[selected_job_idx]
@@ -818,4 +817,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
